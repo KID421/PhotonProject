@@ -32,5 +32,6 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
+  - RPCFlipSprite
   DisableAutoOpenWizard: 1
   ShowSettings: 1

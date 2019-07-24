@@ -16,7 +16,16 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     public string namePlayer, nameCreateRoom, nameJoinRoom;                                 // 字串：玩家名稱、建房名稱、加入房間名稱
 
-    public string NamePlayer { get => namePlayer; set => namePlayer = value; }              // 屬性：給 UI 設定
+    // 屬性：給 UI 設定
+    public string NamePlayer
+    {
+        get => namePlayer;
+        set
+        {
+            namePlayer = value;
+            PhotonNetwork.NickName = namePlayer;            // 伺服器.暱稱 = 玩家輸入的名稱
+        }
+    }              
     public string NameCreateRoom { get => nameCreateRoom; set => nameCreateRoom = value; }
     public string NameJoinRoom { get => nameJoinRoom; set => nameJoinRoom = value; }
     #endregion
