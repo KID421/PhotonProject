@@ -6,11 +6,11 @@ namespace KID
 {
     public class Player : MonoBehaviourPun, IPunObservable
     {
+        #region 欄位
         [Header("剛體")]
         public Rigidbody2D rig;
         [Header("速度")]
         public float speed = 10;
-
         [Header("Photon 元件")]
         public PhotonView pv;
         [Header("Player 腳本")]
@@ -25,7 +25,9 @@ namespace KID
         public SpriteRenderer sr;
         [Header("玩家名稱介面")]
         public Text textName;
+        #endregion
 
+        #region 事件
         private void Start()
         {
             // 如果 不是自己的物件
@@ -53,13 +55,16 @@ namespace KID
             {
                 Move();
                 FlipSprite();
+                Shoot();
             }
             else
             {
                 SmoothMove();
             }
         }
+        #endregion
 
+        #region 方法
         /// <summary>
         /// 其他玩家的物件同步平滑移動
         /// </summary>
@@ -115,6 +120,24 @@ namespace KID
             else if (stream.IsReading)
             {
                 positionNext = (Vector3)stream.ReceiveNext();       // 同步座標資訊 = (轉型) 接收資料
+            }
+        }
+        #endregion
+
+        [Header("生成子彈位置")]
+        public Transform pointBullet;
+        [Header("子彈")]
+        public GameObject bullet;
+
+        /// <summary>
+        /// 發射子彈
+        /// </summary>
+        private void Shoot()
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                // 伺服器.實例化(物件名稱，座標，角度)
+                PhotonNetwork.Instantiate(bullet.name, pointBullet.position, pointBullet.rotation);
             }
         }
     }
