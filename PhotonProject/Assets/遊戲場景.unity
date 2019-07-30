@@ -1198,6 +1198,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1302602059}
   - component: {fileID: 1302602058}
+  - component: {fileID: 1302602060}
   m_Layer: 0
   m_Name: "\u904A\u6232\u7BA1\u7406\u5668"
   m_TagString: Untagged
@@ -1226,7 +1227,6 @@ MonoBehaviour:
   - {fileID: 1674576129}
   - {fileID: 28080186}
   - {fileID: 1991980915}
-  textCCU: {fileID: 655263727}
 --- !u!4 &1302602059
 Transform:
   m_ObjectHideFlags: 0
@@ -1241,6 +1241,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1302602060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302602057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 0
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  viewIdField: 1
+  InstantiationId: 1
+  isRuntimeInstantiated: 0
 --- !u!4 &1359378158 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3075338707625463751, guid: aaf2a62e929ef0b4a8ca0e7309d751ae,

@@ -33,6 +33,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     private void Start()
     {
         Connect();
+
+        Screen.SetResolution(800, 450, false);
     }
 
     #region 自訂方法 - 連線、按鈕

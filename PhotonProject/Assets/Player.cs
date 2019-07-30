@@ -19,12 +19,22 @@ namespace KID
         public GameObject obj;
         [Header("同步座標資訊")]
         public Vector3 positionNext;
-        [Header("同步平滑速度"), Range(0.1f, 5)]
+        [Header("同步平滑速度"), Range(0.1f, 20)]
         public float smoothSpeed = 0.5f;
+        public float smoothDirectionSpeed = 0.5f;
         [Header("圖片渲染器")]
         public SpriteRenderer sr;
         [Header("玩家名稱介面")]
         public Text textName;
+        [Header("連線人數介面")]
+        public Text textCCU;
+        [Header("中心點")]
+        public Transform pointCenter;
+        [Header("玩家介面")]
+        public GameObject uiPlayer;
+        [Header("血量")]
+        public float hp = 100;
+        private float maxHp = 100;
         #endregion
 
         #region 事件
@@ -42,7 +52,10 @@ namespace KID
             {
                 // 玩家名稱介面.文字 = 伺服器.暱稱
                 textName.text = PhotonNetwork.NickName;
+                uiPlayer.SetActive(true);
             }
+
+            textCCU = GameObject.Find("連線人數").GetComponent<Text>();
         }
 
         /// <summary>
@@ -56,11 +69,16 @@ namespace KID
                 Move();
                 FlipSprite();
                 Shoot();
+                RotateWeapon();
             }
             else
             {
                 SmoothMove();
+                SmoothRotateWeapon();
             }
+
+            textCCU.text = "連線人數：" + PhotonNetwork.CurrentRoom.PlayerCount + " / 20";
+
         }
         #endregion
 
@@ -108,6 +126,31 @@ namespace KID
             }
         }
 
+        private void RotateWeapon()
+        {
+            Vector3 posMouse = Input.mousePosition;
+            Vector3 posWorld = Camera.main.ScreenToWorldPoint(posMouse);
+
+            direction = new Vector2(posWorld.x - pointCenter.position.x, posWorld.y - pointCenter.position.y);
+
+            pointCenter.right = direction;
+
+            //pv.RPC("RPCRotateWeapon", RpcTarget.All);
+        }
+
+        private void SmoothRotateWeapon()
+        {
+            pointCenter.right = Vector2.Lerp(pointCenter.right, direction, smoothDirectionSpeed * Time.deltaTime);
+        }
+
+        [PunRPC]
+        private void RPCRotateWeapon()
+        {
+            pointCenter.right = direction;
+        }
+
+        Vector2 direction;
+
         // 同步資料方法
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
@@ -115,11 +158,13 @@ namespace KID
             if (stream.IsWriting)
             {
                 stream.SendNext(transform.position);                // 傳遞資料 (座標)
+                stream.SendNext(direction);
             }
             // 如果 正在讀取資料
             else if (stream.IsReading)
             {
                 positionNext = (Vector3)stream.ReceiveNext();       // 同步座標資訊 = (轉型) 接收資料
+                direction = (Vector2)stream.ReceiveNext();
             }
         }
         #endregion
@@ -138,6 +183,28 @@ namespace KID
             {
                 // 伺服器.實例化(物件名稱，座標，角度)
                 PhotonNetwork.Instantiate(bullet.name, pointBullet.position, pointBullet.rotation);
+            }
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.gameObject.tag == "子彈")
+            {
+                hp -= 10;
+                uiPlayer.transform.GetChild(1).GetComponent<Image>().fillAmount = hp / maxHp;
+
+                if (hp <= 10)
+                {
+                    if (pv.IsMine)
+                    {
+                        PhotonNetwork.LeaveRoom();
+                        PhotonNetwork.LoadLevel("大廳");
+                    }
+                    else
+                    {
+                        PhotonNetwork.DestroyPlayerObjects(pv.InstantiationId);
+                    }
+                }
             }
         }
     }
