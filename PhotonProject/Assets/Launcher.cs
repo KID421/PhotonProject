@@ -32,6 +32,8 @@ public class Launcher : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        Screen.SetResolution(800, 450, false);      // 螢幕.設定解析度(寬，高，取消全螢幕)
+
         Connect();
     }
 

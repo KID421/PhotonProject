@@ -21,6 +21,8 @@ namespace KID
         public Vector3 positionNext;
         [Header("同步平滑速度"), Range(0.1f, 20)]
         public float smoothSpeed = 0.5f;
+        [Header("同步平滑旋轉武器"), Range(0.1f, 20)]
+        public float smoothRotateSpeed = 15;
         [Header("圖片渲染器")]
         public SpriteRenderer sr;
         [Header("玩家名稱介面")]
@@ -31,8 +33,15 @@ namespace KID
         public GameObject bullet;
         [Header("中心點")]
         public Transform pointCenter;
+        [Header("玩家介面")]
+        public GameObject uiPlayer;     // 整組介面
+        public Image imageHp;           // 血量圖片
+        public Text textHp;             // 血量文字
+        public float hp = 100;          // 當前血量
+        private float maxHp = 100;      // 最大血量
 
         private Text textCCU;
+        private Vector2 direction;          // 二維向量 方向
         #endregion
 
         #region 事件
@@ -48,8 +57,8 @@ namespace KID
             // 否則 是自己的物件
             else
             {
-                // 玩家名稱介面.文字 = 伺服器.暱稱
-                textName.text = PhotonNetwork.NickName;
+                textName.text = PhotonNetwork.NickName;     // 玩家名稱介面.文字 = 伺服器.暱稱
+                uiPlayer.SetActive(true);                   // 整組介面.啟動設定(顯示)
             }
 
             // 連線人數介面 = 遊戲物件.尋找("物件名稱").取得元件<元件類型>();
@@ -77,6 +86,21 @@ namespace KID
 
             // PhotonNetwork.CurrentRoom.PlayerCount 伺服器.當前房間.玩家數
             textCCU.text = "連線人數：" + PhotonNetwork.CurrentRoom.PlayerCount + " / 20";
+        }
+
+        /// <summary>
+        /// 2D 物件碰撞開始時執行一次
+        /// </summary>
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.gameObject.tag == "子彈")                 // 如果 碰到.遊戲物件.標籤 等於 "子彈"
+            {
+                hp -= 10;                                           // 扣血
+                imageHp.fillAmount = hp / maxHp;                    // 更新血條介面
+                textHp.text = "HP - " + hp + " / " + maxHp;         // 更新血量介面
+
+                if (hp <= 0) Dead();                                // 如果 血量 <= 0 死亡
+            }
         }
         #endregion
 
@@ -125,6 +149,26 @@ namespace KID
         }
 
         /// <summary>
+        /// 旋轉武器
+        /// </summary>
+        private void RotateWeapon()
+        {
+            // 取得滑鼠座標 - 屬於螢幕座標
+            Vector3 posMouse = Input.mousePosition;
+            // 將螢幕座標轉為世界座標
+            Vector3 posWorld = Camera.main.ScreenToWorldPoint(posMouse);
+            
+            // 計算方向 = 滑鼠.x - 中心點.x，滑鼠.y - 中心點.y
+            direction = new Vector2(posWorld.x - pointCenter.position.x, posWorld.y - pointCenter.position.y);
+
+            // 中心點.方向 = 計算方向
+            // 前方為紅色 X 軸 - right
+            // 前方為綠色 Y 軸 - up
+            // 前方為藍色 Z 軸 - forward
+            pointCenter.right = direction;
+        }
+
+        /// <summary>
         /// 發射子彈
         /// </summary>
         private void Shoot()
@@ -136,9 +180,6 @@ namespace KID
             }
         }
 
-        [Header("同步平滑旋轉武器"), Range(0.1f, 20)]
-        public float smoothRotateSpeed = 15;
-
         /// <summary>
         /// 其他玩家的武器同步平滑旋轉
         /// </summary>
@@ -146,6 +187,18 @@ namespace KID
         {
             // 中心點.前方 = 二維向量.插值(中心點.前方，方向，平滑速度 * 1 / 60)
             pointCenter.right = Vector2.Lerp(pointCenter.right, direction, smoothRotateSpeed * Time.deltaTime);
+        }
+
+        /// <summary>
+        /// 玩家死亡的方法
+        /// </summary>
+        private void Dead()
+        {
+            if (pv.IsMine)                          // 如果 是自己的物件
+            {
+                PhotonNetwork.LeaveRoom();          // 伺服器.離開房間
+                PhotonNetwork.LoadLevel("大廳");    // 伺服器.載入大廳
+            }
         }
 
         // 同步資料方法
@@ -165,28 +218,5 @@ namespace KID
             }
         }
         #endregion
-
-        // 二維向量 方向
-        private Vector2 direction;
-
-        /// <summary>
-        /// 旋轉武器
-        /// </summary>
-        private void RotateWeapon()
-        {
-            // 取得滑鼠座標 - 屬於螢幕座標
-            Vector3 posMouse = Input.mousePosition;
-            // 將螢幕座標轉為世界座標
-            Vector3 posWorld = Camera.main.ScreenToWorldPoint(posMouse);
-            
-            // 計算方向 = 滑鼠.x - 中心點.x，滑鼠.y - 中心點.y
-            direction = new Vector2(posWorld.x - pointCenter.position.x, posWorld.y - pointCenter.position.y);
-
-            // 中心點.方向 = 計算方向
-            // 前方為紅色 X 軸 - right
-            // 前方為綠色 Y 軸 - up
-            // 前方為藍色 Z 軸 - forward
-            pointCenter.right = direction;
-        }
     }
 }

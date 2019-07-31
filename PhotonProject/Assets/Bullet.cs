@@ -16,8 +16,11 @@ public class Bullet : MonoBehaviourPun  // 繼承父類別 - Pun
     /// </summary>
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // 伺服器.刪除(物件); - 用伺服器生成的物件必須透過伺服器刪除。
-        PhotonNetwork.Destroy(gameObject);
+        GetComponent<SpriteRenderer>().enabled = false;     // 取得元件 圖形渲染 關閉
+        GetComponent<Collider2D>().enabled = false;         // 取得元件 碰撞器2D 關閉
+
+        CancelInvoke();                 // 取消所有 Invoke
+        Invoke("DelayDestroy", 0.1f);
     }
 
     private void Start()
@@ -28,6 +31,7 @@ public class Bullet : MonoBehaviourPun  // 繼承父類別 - Pun
 
     private void DelayDestroy()
     {
+        // 伺服器.刪除(物件); - 用伺服器生成的物件必須透過伺服器刪除。
         PhotonNetwork.Destroy(gameObject);
     }
 
