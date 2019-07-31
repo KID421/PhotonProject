@@ -25,11 +25,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 826488940817308196}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.564, y: -0.105, z: 0}
+  m_LocalPosition: {x: 0.65, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5156307444266954221}
-  m_RootOrder: 2
+  m_Father: {fileID: 7132887027986247377}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6200386466474600252
 SpriteRenderer:
@@ -178,6 +178,37 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &5008538200628933657
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7132887027986247377}
+  m_Layer: 0
+  m_Name: "\u4E2D\u5FC3\u9EDE"
+  m_TagString: Untagged
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7132887027986247377
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5008538200628933657}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3359977350250345684}
+  m_Father: {fileID: 5156307444266954221}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5156307444266954209
 GameObject:
   m_ObjectHideFlags: 0
@@ -207,12 +238,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5156307444266954209}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.117, y: -0.389, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5156307445651489224}
   - {fileID: 4646734217150043787}
-  - {fileID: 3359977350250345684}
+  - {fileID: 7132887027986247377}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -279,7 +310,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.4
 --- !u!50 &5156307444266954210
 Rigidbody2D:
   serializedVersion: 4
@@ -319,11 +350,13 @@ MonoBehaviour:
   player: {fileID: 5156307444266954222}
   obj: {fileID: 5156307445651489229}
   positionNext: {x: 0, y: 0, z: 0}
-  smoothSpeed: 2.5
+  smoothSpeed: 15
   sr: {fileID: 5156307444266954220}
   textName: {fileID: 7326978510727283937}
   pointBullet: {fileID: 3359977350250345684}
   bullet: {fileID: 1110753048623100360, guid: 9c8044ceae534f541a997c1106770484, type: 3}
+  pointCenter: {fileID: 7132887027986247377}
+  smoothRotateSpeed: 15
 --- !u!114 &-4093456697894552785
 MonoBehaviour:
   m_ObjectHideFlags: 0

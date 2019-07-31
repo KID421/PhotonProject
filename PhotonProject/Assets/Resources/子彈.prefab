@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1110753048623100356}
   - component: {fileID: 1110753048623100357}
   - component: {fileID: -7770359550186212231}
+  - component: {fileID: 6344511807547201720}
   m_Layer: 0
   m_Name: "\u5B50\u5F48"
   m_TagString: "\u5B50\u5F48"
@@ -118,7 +119,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &-7770359550186212231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +137,21 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 0
   OwnershipTransfer: 0
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 0}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &6344511807547201720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1110753048623100360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d5274cf25b00f744b1e9c00dfc4f193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 10

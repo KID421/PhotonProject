@@ -19,12 +19,20 @@ namespace KID
         public GameObject obj;
         [Header("同步座標資訊")]
         public Vector3 positionNext;
-        [Header("同步平滑速度"), Range(0.1f, 5)]
+        [Header("同步平滑速度"), Range(0.1f, 20)]
         public float smoothSpeed = 0.5f;
         [Header("圖片渲染器")]
         public SpriteRenderer sr;
         [Header("玩家名稱介面")]
         public Text textName;
+        [Header("生成子彈位置")]
+        public Transform pointBullet;
+        [Header("子彈")]
+        public GameObject bullet;
+        [Header("中心點")]
+        public Transform pointCenter;
+
+        private Text textCCU;
         #endregion
 
         #region 事件
@@ -43,6 +51,9 @@ namespace KID
                 // 玩家名稱介面.文字 = 伺服器.暱稱
                 textName.text = PhotonNetwork.NickName;
             }
+
+            // 連線人數介面 = 遊戲物件.尋找("物件名稱").取得元件<元件類型>();
+            textCCU = GameObject.Find("連線人數").GetComponent<Text>();
         }
 
         /// <summary>
@@ -56,11 +67,16 @@ namespace KID
                 Move();
                 FlipSprite();
                 Shoot();
+                RotateWeapon();
             }
             else
             {
                 SmoothMove();
+                SmoothRotateWeapon();
             }
+
+            // PhotonNetwork.CurrentRoom.PlayerCount 伺服器.當前房間.玩家數
+            textCCU.text = "連線人數：" + PhotonNetwork.CurrentRoom.PlayerCount + " / 20";
         }
         #endregion
 
@@ -108,27 +124,6 @@ namespace KID
             }
         }
 
-        // 同步資料方法
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-            // 如果 正在寫入資料
-            if (stream.IsWriting)
-            {
-                stream.SendNext(transform.position);                // 傳遞資料 (座標)
-            }
-            // 如果 正在讀取資料
-            else if (stream.IsReading)
-            {
-                positionNext = (Vector3)stream.ReceiveNext();       // 同步座標資訊 = (轉型) 接收資料
-            }
-        }
-        #endregion
-
-        [Header("生成子彈位置")]
-        public Transform pointBullet;
-        [Header("子彈")]
-        public GameObject bullet;
-
         /// <summary>
         /// 發射子彈
         /// </summary>
@@ -139,6 +134,59 @@ namespace KID
                 // 伺服器.實例化(物件名稱，座標，角度)
                 PhotonNetwork.Instantiate(bullet.name, pointBullet.position, pointBullet.rotation);
             }
+        }
+
+        [Header("同步平滑旋轉武器"), Range(0.1f, 20)]
+        public float smoothRotateSpeed = 15;
+
+        /// <summary>
+        /// 其他玩家的武器同步平滑旋轉
+        /// </summary>
+        private void SmoothRotateWeapon()
+        {
+            // 中心點.前方 = 二維向量.插值(中心點.前方，方向，平滑速度 * 1 / 60)
+            pointCenter.right = Vector2.Lerp(pointCenter.right, direction, smoothRotateSpeed * Time.deltaTime);
+        }
+
+        // 同步資料方法
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            // 如果 正在寫入資料
+            if (stream.IsWriting)
+            {
+                stream.SendNext(transform.position);                // 傳遞資料 (座標)
+                stream.SendNext(direction);                         // 傳遞資料 (武器方向)
+            }
+            // 如果 正在讀取資料
+            else if (stream.IsReading)
+            {
+                positionNext = (Vector3)stream.ReceiveNext();       // 同步座標資訊 = (轉型) 接收資料
+                direction = (Vector2)stream.ReceiveNext();          // 同步武器方向資訊 = (轉型) 接收資料
+            }
+        }
+        #endregion
+
+        // 二維向量 方向
+        private Vector2 direction;
+
+        /// <summary>
+        /// 旋轉武器
+        /// </summary>
+        private void RotateWeapon()
+        {
+            // 取得滑鼠座標 - 屬於螢幕座標
+            Vector3 posMouse = Input.mousePosition;
+            // 將螢幕座標轉為世界座標
+            Vector3 posWorld = Camera.main.ScreenToWorldPoint(posMouse);
+            
+            // 計算方向 = 滑鼠.x - 中心點.x，滑鼠.y - 中心點.y
+            direction = new Vector2(posWorld.x - pointCenter.position.x, posWorld.y - pointCenter.position.y);
+
+            // 中心點.方向 = 計算方向
+            // 前方為紅色 X 軸 - right
+            // 前方為綠色 Y 軸 - up
+            // 前方為藍色 Z 軸 - forward
+            pointCenter.right = direction;
         }
     }
 }
